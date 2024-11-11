@@ -6,15 +6,19 @@ public class Player {
     public float velX;
     public float velY;
 
-    public Player(float width, float height, float posX, float posY) {
-        this.width = width;
-        this.height = height;
+    public PlayerShot playerShot;
+
+    public Player(float posX, float posY) {
         this.posX = posX;
         this.posY = posY;
+        this.width = 100;
+        this.height = 50;
+        playerShot = new PlayerShot();
+        playerShot.setPosition(this.posX + this.width - playerShot.width, this.posY + (this.height/2) - (playerShot.height/2));
     }
 
-    public void move() {
-        this.posX += this.velX;
-        this.posY += this.velY;
-    }
+    /*public void setPosition(float posX, float posY) {
+        this.posX = posX;
+        this.posY = posY;
+    }*/
 }

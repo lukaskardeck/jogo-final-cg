@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 public class Game extends JPanel {
     
     public Player player;
+    public PlayerShot playerShot;
 
     // DIRECIONAIS DE MOVIMENTAÇÃO DO PLAYER
     public boolean key_player_up;
@@ -16,7 +17,10 @@ public class Game extends JPanel {
     public boolean key_player_left;
 
     public Game() {
-        player = new Player(100, 50, 100, 100);
+        player = new Player(100, 100);
+
+        playerShot = player.playerShot;
+        // playerShot.setPosition(player.posX + player.width - playerShot.width, player.posY + (player.height/2) - (playerShot.height/2));
 
         setFocusable(true);
         setLayout(null);
@@ -55,15 +59,14 @@ public class Game extends JPanel {
     * 
     *********************************/
     public void handlerEvents() {
-        movePlayer();
+        listenPlayerMovements();
     }
 
 
     public void update() {
         // métodos do player
-        player.move();
+        movePlayer();
         colisionPlayerWithWindow();
-
     }
 
 
@@ -91,7 +94,7 @@ public class Game extends JPanel {
     * MÉTODOS DO PLAYER ↓↓↓
     * 
     *********************************/
-    public void movePlayer() {
+    public void listenPlayerMovements() {
         int velModulePlayer = 3;
         player.velX = player.velY = 0;
 
@@ -111,26 +114,52 @@ public class Game extends JPanel {
     }
 
 
+    public void movePlayer() {
+        player.posX += player.velX;
+        player.posY += player.velY;
+        movePlayerShot();
+    }
+
+
     public void colisionPlayerWithWindow() {
         // Colisão com a parte de cima da janela
         if (player.posY <= 0) {
             player.posY = 0;
+            player.velY = 0;
+            playerShot.posY = player.posY + (player.height/2) - (playerShot.height/2);
         }
 
         // Colisão com a parte de baixo da janela
         else if (player.posY + player.height >= Principal.WINDOW_HEIGHT) {
             player.posY = Principal.WINDOW_HEIGHT - player.height;
+            player.velY = 0;
+            playerShot.posY = player.posY + (player.height/2) - (playerShot.height/2);
         }
 
         // Colisão com a lateral esquerda da janela
         if (player.posX <= 0) {
             player.posX = 0;
+            player.velX = 0;
+            playerShot.posX = player.posX + player.width - playerShot.width;
         }
 
         // Colisão com a lateral direita da janela
         else if (player.posX + player.width >= Principal.WINDOW_WIDTH) {
             player.posX = Principal.WINDOW_WIDTH - player.width;
+            player.velX = 0;
+            playerShot.posX = player.posX + player.width - playerShot.width;
         } 
+    }
+
+
+    /*********************************
+    *
+    * MÉTODOS DO PLAYERSHOT ↓↓↓
+    * 
+    *********************************/
+    public void movePlayerShot() {
+        playerShot.posX += player.velX;
+        playerShot.posY += player.velY;
     }
 
 
@@ -143,7 +172,13 @@ public class Game extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setBackground(Color.gray);
+        
+        // Desenhando o player
         g.setColor(Color.magenta);
         g.fillRect((int) player.posX, (int) player.posY, (int) player.width, (int) player.height);
+
+        // Desenhando o PlayerShot
+        g.setColor(Color.BLUE);
+        g.fillRect((int) playerShot.posX, (int) playerShot.posY, (int) playerShot.width, (int) playerShot.height);
     }
 }
