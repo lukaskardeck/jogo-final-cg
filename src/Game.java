@@ -16,11 +16,15 @@ public class Game extends JPanel {
     public boolean key_player_down;
     public boolean key_player_left;
 
+
+    // FLAG DE DISPARO DO PLAYERSHOT
+    public boolean shot;
+    public boolean releaseShot;
+
     public Game() {
         player = new Player(100, 100);
 
         playerShot = player.playerShot;
-        // playerShot.setPosition(player.posX + player.width - playerShot.width, player.posY + (player.height/2) - (playerShot.height/2));
 
         setFocusable(true);
         setLayout(null);
@@ -35,6 +39,10 @@ public class Game extends JPanel {
                     case KeyEvent.VK_A -> key_player_left = true;
                     case KeyEvent.VK_S -> key_player_down = true;
                     case KeyEvent.VK_D -> key_player_right = true;
+                    case KeyEvent.VK_SPACE -> {
+                        shot = true;
+                        releaseShot = false;
+                    }
                 }
             }
 
@@ -46,6 +54,7 @@ public class Game extends JPanel {
                     case KeyEvent.VK_A -> key_player_left = false;
                     case KeyEvent.VK_S -> key_player_down = false;
                     case KeyEvent.VK_D -> key_player_right = false;
+                    case KeyEvent.VK_SPACE -> releaseShot = true;
                 }
             }
         });
@@ -60,6 +69,7 @@ public class Game extends JPanel {
     *********************************/
     public void handlerEvents() {
         listenPlayerMovements();
+        listenPlayerShotMovements();
     }
 
 
@@ -67,6 +77,9 @@ public class Game extends JPanel {
         // métodos do player
         movePlayer();
         colisionPlayerWithWindow();
+
+        // métodos do playerShot
+        colisionPlayerShotWithWindow();
     }
 
 
@@ -123,28 +136,28 @@ public class Game extends JPanel {
 
     public void colisionPlayerWithWindow() {
         // Colisão com a parte de cima da janela
-        if (player.posY <= 0) {
+        if (player.posY < 0) {
             player.posY = 0;
             player.velY = 0;
             playerShot.posY = player.posY + (player.height/2) - (playerShot.height/2);
         }
 
         // Colisão com a parte de baixo da janela
-        else if (player.posY + player.height >= Principal.WINDOW_HEIGHT) {
+        else if (player.posY + player.height > Principal.WINDOW_HEIGHT) {
             player.posY = Principal.WINDOW_HEIGHT - player.height;
             player.velY = 0;
             playerShot.posY = player.posY + (player.height/2) - (playerShot.height/2);
         }
 
         // Colisão com a lateral esquerda da janela
-        if (player.posX <= 0) {
+        if (player.posX < 0) {
             player.posX = 0;
             player.velX = 0;
             playerShot.posX = player.posX + player.width - playerShot.width;
         }
 
         // Colisão com a lateral direita da janela
-        else if (player.posX + player.width >= Principal.WINDOW_WIDTH) {
+        else if (player.posX + player.width > Principal.WINDOW_WIDTH) {
             player.posX = Principal.WINDOW_WIDTH - player.width;
             player.velX = 0;
             playerShot.posX = player.posX + player.width - playerShot.width;
@@ -157,9 +170,29 @@ public class Game extends JPanel {
     * MÉTODOS DO PLAYERSHOT ↓↓↓
     * 
     *********************************/
+    public void listenPlayerShotMovements() {
+        if (shot) {
+            playerShot.velX = 20;
+            playerShot.velY = 0;
+        }
+        else {
+            playerShot.velX = player.velX;
+            playerShot.velY = player.velY;
+        }
+    }
+
     public void movePlayerShot() {
-        playerShot.posX += player.velX;
-        playerShot.posY += player.velY;
+        playerShot.posX += playerShot.velX;
+        playerShot.posY += playerShot.velY;
+    }
+
+
+    public void colisionPlayerShotWithWindow() {
+        if (playerShot.posX > Principal.WINDOW_WIDTH) {
+            playerShot.posY = player.posY + (player.height/2) - (playerShot.height/2);
+            playerShot.posX = player.posX + player.width - playerShot.width;
+            if (releaseShot) shot = false;
+        }
     }
 
 
