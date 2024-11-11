@@ -9,7 +9,7 @@ public class Game extends JPanel {
     
     public Player player;
 
-    /* DIRECIONAIS DE MOVIMENTAÇÃO DO PLAYER */
+    // DIRECIONAIS DE MOVIMENTAÇÃO DO PLAYER
     public boolean key_player_up;
     public boolean key_player_right;
     public boolean key_player_down;
@@ -55,12 +55,15 @@ public class Game extends JPanel {
     * 
     *********************************/
     public void handlerEvents() {
-        moverPlayer();
+        movePlayer();
     }
 
 
     public void update() {
+        // métodos do player
         player.move();
+        colisionPlayerWithWindow();
+
     }
 
 
@@ -88,7 +91,7 @@ public class Game extends JPanel {
     * MÉTODOS DO PLAYER ↓↓↓
     * 
     *********************************/
-    public void moverPlayer() {
+    public void movePlayer() {
         int velModulePlayer = 3;
         player.velX = player.velY = 0;
 
@@ -105,6 +108,29 @@ public class Game extends JPanel {
         }
         else if (key_player_right) player.velX = velModulePlayer;
         else if (key_player_left) player.velX = -velModulePlayer;
+    }
+
+
+    public void colisionPlayerWithWindow() {
+        // Colisão com a parte de cima da janela
+        if (player.posY <= 0) {
+            player.posY = 0;
+        }
+
+        // Colisão com a parte de baixo da janela
+        else if (player.posY + player.height >= Principal.WINDOW_HEIGHT) {
+            player.posY = Principal.WINDOW_HEIGHT - player.height;
+        }
+
+        // Colisão com a lateral esquerda da janela
+        if (player.posX <= 0) {
+            player.posX = 0;
+        }
+
+        // Colisão com a lateral direita da janela
+        else if (player.posX + player.width >= Principal.WINDOW_WIDTH) {
+            player.posX = Principal.WINDOW_WIDTH - player.width;
+        } 
     }
 
 
