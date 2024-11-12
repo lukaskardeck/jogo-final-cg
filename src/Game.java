@@ -2,13 +2,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Queue;
 
 import javax.swing.JPanel;
 
 public class Game extends JPanel {
 
     public Player player;
-    public PlayerShot playerShot;
+    public Queue<PlayerShot> playerShotQueue;
+    public ArrayList<PlayerShot> playerShot;
     public Enemy enemy;
 
     // DIRECIONAIS DE MOVIMENTAÇÃO DO PLAYER
@@ -26,7 +29,8 @@ public class Game extends JPanel {
 
     public Game() {
         player = new Player();
-        playerShot = player.playerShot;
+        playerShotQueue = player.playerShot;
+        playerShot = new ArrayList<>();
         enemy = new Enemy();
 
         setFocusable(true);
@@ -81,6 +85,7 @@ public class Game extends JPanel {
         colisionPlayerWithWindow();
 
         // métodos do playerShot
+        addPlayerShotsInGame();
         colisionPlayerShotWithWindow();
         colisionPlayerShotWithEnemy();
     }
@@ -108,7 +113,7 @@ public class Game extends JPanel {
      * 
      *********************************/
     public void listenPlayerMovements() {
-        int velModulePlayer = 3;
+        int velModulePlayer = 5;
         player.velX = player.velY = 0;
 
         /* MOVIMENTAÇÃO DO PLAYER COM O TECLADO */
@@ -141,28 +146,24 @@ public class Game extends JPanel {
         if (player.posY < 0) {
             player.posY = 0;
             player.velY = 0;
-            playerShot.posY = player.posY + (player.height / 2) - (playerShot.height / 2);
         }
 
         // Colisão com a parte de baixo da janela
         else if (player.posY + player.height > Principal.WINDOW_HEIGHT) {
             player.posY = Principal.WINDOW_HEIGHT - player.height;
             player.velY = 0;
-            playerShot.posY = player.posY + (player.height / 2) - (playerShot.height / 2);
         }
 
         // Colisão com a lateral esquerda da janela
         if (player.posX < 0) {
             player.posX = 0;
             player.velX = 0;
-            playerShot.posX = player.posX + player.width - playerShot.width;
         }
 
         // Colisão com a lateral direita da janela
         else if (player.posX + player.width > Principal.WINDOW_WIDTH) {
             player.posX = Principal.WINDOW_WIDTH - player.width;
             player.velX = 0;
-            playerShot.posX = player.posX + player.width - playerShot.width;
         }
     }
 
@@ -171,44 +172,78 @@ public class Game extends JPanel {
      * MÉTODOS DO PLAYERSHOT ↓↓↓
      * 
      *********************************/
-    public void listenPlayerShotMovements() {
+    public void addPlayerShotsInGame() {
+        //System.out.println("Queue: " + playerShotQueue.size() + ";   Lista: " + playerShot.size());
         if (shot) {
-            playerShot.velX = 20;
-            playerShot.velY = 0;
-        } else {
-            playerShot.velX = player.velX;
-            playerShot.velY = player.velY;
+            if (!playerShotQueue.isEmpty()) {
+                if (playerShot.isEmpty()) {
+                    PlayerShot ps = playerShotQueue.remove();
+                    ps.setPosition(player.posX + player.width - ps.width,
+                            player.posY + (player.height / 2) - (ps.height / 2));
+                    playerShot.add(ps);
+                }
+
+                else if (playerShot.get(playerShot.size() - 1).posX > (player.posX + player.width + 50)) {
+                    PlayerShot ps = playerShotQueue.remove();
+                    ps.setPosition(player.posX + player.width - ps.width,
+                            player.posY + (player.height / 2) - (ps.height / 2));
+                    playerShot.add(ps);
+                }
+            }
+        }
+    }
+
+    public void listenPlayerShotMovements() {
+        if (releaseShot) {
+            shot = false;
+        }
+
+        for (int i = 0; i < playerShot.size(); i++) {
+            PlayerShot ps = playerShot.get(i);
+
+            if (shot) {
+                ps.isActive = true;
+            }
+
+            if (ps.isActive) {
+                ps.velX = 10;
+                ps.velY = 0;
+            }
         }
     }
 
     public void movePlayerShot() {
-        playerShot.posX += playerShot.velX;
-        playerShot.posY += playerShot.velY;
+        for (int i = 0; i < playerShot.size(); i++) {
+            PlayerShot ps = playerShot.get(i);
+            ps.posX += ps.velX;
+            ps.posY += ps.velY;
+        }
     }
 
     public void colisionPlayerShotWithWindow() {
-        if (playerShot.posX > Principal.WINDOW_WIDTH) {
-            playerShot.posX = player.posX + player.width - playerShot.width;
-            playerShot.posY = player.posY + (player.height / 2) - (playerShot.height / 2);
-            if (releaseShot) {
-                shot = false;
+        for (int i = 0; i < playerShot.size(); i++) {
+            PlayerShot ps = playerShot.get(i);
+            if (ps.posX > Principal.WINDOW_WIDTH) {
+                ps.isActive = false;
+                playerShotQueue.add(playerShot.remove(i));
             }
         }
     }
 
     public void colisionPlayerShotWithEnemy() {
-        if (
+        for (int i = 0; i < playerShot.size(); i++) {
+            PlayerShot ps = playerShot.get(i);
+            if (
             // Colisão com o lado esquerdo do inimigo
-            playerShot.posX + playerShot.width > enemy.posX
-            // Colisão com a parte de cima do inimigo
-            && playerShot.posY + playerShot.height > enemy.posY
-            // Colisão com a parte de baixo do inimigo
-            && playerShot.posY < enemy.posY + enemy.height) {
-            playerShot.posX = player.posX + player.width - playerShot.width;
-            playerShot.posY = player.posY + (player.height / 2) - (playerShot.height / 2);
-            enemy.reposition();
-            if (releaseShot) {
-                shot = false;
+            ps.posX + ps.width > enemy.posX
+                    // Colisão com a parte de cima do inimigo
+                    && ps.posY + ps.height > enemy.posY
+                    // Colisão com a parte de baixo do inimigo
+                    && ps.posY < enemy.posY + enemy.height) {
+                ps.isActive = false;
+                playerShotQueue.add(playerShot.remove(i));
+                enemy.reposition();
+
             }
         }
     }
@@ -225,14 +260,17 @@ public class Game extends JPanel {
 
         // Desenhando o PlayerShot
         g.setColor(Color.BLUE);
-        g.fillRect((int) playerShot.posX, (int) playerShot.posY, (int) playerShot.width, (int) playerShot.height);
-
-        // Desenhando o player
-        g.setColor(Color.green);
-        g.fillRect((int) player.posX, (int) player.posY, (int) player.width, (int) player.height);
+        for (int i = 0; i < playerShot.size(); i++) {
+            PlayerShot ps = playerShot.get(i);
+            g.fillRect((int) ps.posX, (int) ps.posY, (int) ps.width, (int) ps.height);
+        }
 
         // Desenhando o Inimigo
         g.setColor(Color.red);
         g.fillRect((int) enemy.posX, (int) enemy.posY, (int) enemy.width, (int) enemy.height);
+
+        // Desenhando o player
+        g.setColor(Color.green);
+        g.fillRect((int) player.posX, (int) player.posY, (int) player.width, (int) player.height);
     }
 }
