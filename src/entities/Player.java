@@ -2,8 +2,11 @@ package entities;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Stack;
+
+import javax.imageio.ImageIO;
 
 import manager.InputManager;
 import utils.Constants;
@@ -21,17 +24,25 @@ public class Player {
     public Stack<PlayerShot> stackShots;
     public ArrayList<PlayerShot> listShots;
 
+    public BufferedImage sprite;
+
     public Player() {
         this.posX = 100;
         this.posY = 100;
         this.width = 100;
-        this.height = 50;
+        this.height = 49;
 
         this.stackShots = new Stack<>();
         for (int i = 0; i < Constants.NUM_SHOTS; i++) {
             stackShots.push(new PlayerShot());
         }
         this.listShots = new ArrayList<>();
+
+        try {
+            this.sprite = ImageIO.read(getClass().getResource("../assets/images/nave_player.png"));
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar sprite do player");
+        }
     }
 
 
@@ -85,7 +96,8 @@ public class Player {
 
 
     public void render(Graphics g) {
-        g.setColor(Color.green);
-        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
+        //g.setColor(Color.green);
+        //g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
+        g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
 }
