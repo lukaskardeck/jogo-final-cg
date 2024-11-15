@@ -7,6 +7,7 @@ import java.util.Stack;
 
 import javax.swing.JPanel;
 
+import entities.Background;
 import entities.Enemy;
 import entities.Player;
 import manager.CollisionManager;
@@ -20,6 +21,7 @@ public class Game extends JPanel {
     public ArrayList<Enemy> listEnemies;
     public CollisionManager collisionManager;
     public InputManager inputManager;
+    public Background bg;
 
     public Game() {
 
@@ -28,6 +30,7 @@ public class Game extends JPanel {
         listEnemies = new ArrayList<>();
         inputManager = new InputManager();
         collisionManager = new CollisionManager();
+        bg = new Background();
 
         for (int i = 0; i < Constants.NUM_ENEMY; i++) {
             stackEnemies.push(new Enemy());
@@ -51,6 +54,9 @@ public class Game extends JPanel {
     }
 
     public void update() {
+        bg.moveScenes();
+        bg.reposition();
+
         player.updateVelocityPlayer(inputManager);
         player.move();
         collisionManager.checkColisionPlayerWithWindow(player);
@@ -66,9 +72,6 @@ public class Game extends JPanel {
                 player.listShots,
                 stackEnemies,
                 listEnemies);
-
-        System.out.println("Stack: " + stackEnemies.size() + ";  List: " + listEnemies.size());
-
     }
 
     public void render() {
@@ -101,8 +104,6 @@ public class Game extends JPanel {
                             listEnemies.get(listEnemies.size() - 1).width + 250 <
                             Constants.WINDOW_WIDTH;
 
-            System.out.println(shouldSpawnEnemy);
-
             if (shouldSpawnEnemy) {
                 Enemy e = stackEnemies.pop();
                 e.respawn();
@@ -123,7 +124,8 @@ public class Game extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(Color.lightGray);
+        setBackground(Color.gray);
+        bg.render(g);
 
         // Desenhando os disparos do jogador (PlayerShot)
         for (int i = 0; i < player.listShots.size(); i++) {

@@ -85,7 +85,7 @@ public class Player {
 
 
     public void render(Graphics g) {
-        g.setColor(Color.darkGray);
+        g.setColor(Color.green);
         g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
     }
 }
