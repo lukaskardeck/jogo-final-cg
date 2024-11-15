@@ -29,12 +29,12 @@ public class PlayerShot {
     }
 
     public void respawn(Player player) {
-        this.posX = player.posX + player.width - this.width;
-        this.posY = player.posY + (player.height / 2) - (this.height / 2);
+        this.posX = player.posX + player.width - this.width - 15;
+        this.posY = player.posY + (player.height / 2) - (this.height / 2) + 16;
     }
 
     public void render(Graphics g) {
-        g.setColor(Color.blue);
+        g.setColor(Color.green);
         g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
     }
 }
