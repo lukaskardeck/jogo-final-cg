@@ -101,8 +101,7 @@ public class Game extends JPanel {
             // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
             boolean shouldSpawnEnemy = listEnemies.isEmpty() ||
                     listEnemies.get(listEnemies.size() - 1).posX +
-                            listEnemies.get(listEnemies.size() - 1).width + 250 <
-                            Constants.WINDOW_WIDTH;
+                            listEnemies.get(listEnemies.size() - 1).width + 200 < Constants.WINDOW_WIDTH;
 
             if (shouldSpawnEnemy) {
                 Enemy e = stackEnemies.pop();

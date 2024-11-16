@@ -1,8 +1,11 @@
 package entities;
 
-import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
+
 import utils.Constants;
 
 public class Enemy {
@@ -15,13 +18,21 @@ public class Enemy {
 
     public Random random;
 
+    public BufferedImage sprite;
+
     public Enemy() {
         this.random = new Random();
-        this.width = 70;
-        this.height = 50;
+        this.width = 45;
+        this.height = 36;
         this.posX = Constants.WINDOW_WIDTH;
         this.posY = random.nextFloat(Constants.WINDOW_HEIGHT - this.height);
-        this.velX = -5;
+        this.velX = -Constants.ENEMY_VELOCITY_MODULE;
+
+        try {
+            this.sprite = ImageIO.read(getClass().getResource("../assets/images/inimigo.png"));
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar a sprite do inimigo");
+        }
     }
 
     public void move() {
@@ -36,7 +47,8 @@ public class Enemy {
 
 
     public void render(Graphics g) {
-        g.setColor(Color.red);
-        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
+        //g.setColor(Color.red);
+        //g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
+        g.drawImage(sprite, (int) this.posX - 5, (int) this.posY - 3, null);
     }
 }
