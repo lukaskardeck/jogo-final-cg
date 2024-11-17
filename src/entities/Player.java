@@ -74,8 +74,7 @@ public class Player {
             this.velX = -pvm;
     }
 
-
-    public void shoot(InputManager inputHandler) {
+    public void spawnShot(InputManager inputHandler) {
         // 'spawn' do tiro no game
         if (inputHandler.shot && !stackShots.isEmpty()) {
             // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
@@ -85,7 +84,11 @@ public class Player {
                 listShots.add(ps);
             }
         }
+        
+    }
 
+
+    public void shoot() {
         // Movimentando o disparo na tela (atirando)
         for (int i = 0; i < listShots.size(); i++) {
             PlayerShot ps = listShots.get(i);
