@@ -18,6 +18,7 @@ import manager.TerrainManager;
 import utils.Constants;
 
 public class Game extends JPanel {
+    public GameState currentState = GameState.MENU;
 
     public Player player;
     public Stack<Enemy> stackEnemies;
@@ -56,21 +57,55 @@ public class Game extends JPanel {
      * 
      *********************************/
     public void handlerEvents() {
-        player.updateVelocityPlayer(inputManager);
-        player.spawnShot(inputManager);
+        if (currentState == GameState.MENU) {
+            // Iniciar o jogo
+            if (inputManager.enter) {
+                currentState = GameState.GAME;
+                inputManager.enter = false;
+            
+            // Fechar o jogo
+            } else if (inputManager.escape) {
+                System.exit(0);
+            }
+        }
+
+        else if (currentState == GameState.GAME) {
+            // Pausar o jogo
+            if (inputManager.p) {
+                currentState = GameState.PAUSE;
+                inputManager.p = false;
+                inputManager.escape = false;
+            }
+        }
+
+        else if (currentState == GameState.PAUSE) {
+            // Retornar ao jogo
+            if (inputManager.p) {
+                currentState = GameState.GAME;
+                inputManager.p = false;
+            }
+
+            // Sair do jogo
+            else if (inputManager.escape) {
+                System.exit(0);
+            }
+        }
+
     }
 
     public void update() {
-        if (!inputManager.pause) {
+        if (currentState == GameState.GAME) {
             bg.moveScenes();
             bg.reposition();
 
             terrainManager.moveTerrains(-3);
 
+            player.updateVelocityPlayer(inputManager);
             player.move();
             collisionManager.checkColisionPlayerWithWindow(player);
             collisionManager.checkColisionPlayerWithEnemy(player, stackEnemies, listEnemies);
 
+            player.spawnShot(inputManager);
             player.shoot();
             collisionManager.checkColisionPlayerShotsWithWindow(player.stackShots, player.listShots);
 
@@ -126,25 +161,57 @@ public class Game extends JPanel {
         }
     }
 
-    public void messagePause(Graphics g) {
-        String message = "PRESS 'ESC' TO CONTINUE";
+    public void renderMenu(Graphics g) {
+        String title = "GAME MENU";
+        String playOption = "Press ENTER to Play";
+        String exitOption = "Press ESC to Quit";
+
+        Font font = new Font("Arial", Font.BOLD, 30);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+
+        // Posiciona o título
+        FontMetrics fm = g.getFontMetrics(font);
+        int xTitle = (Constants.WINDOW_WIDTH - fm.stringWidth(title)) / 2;
+        int yTitle = Constants.WINDOW_HEIGHT / 5; // 1/5 da tela de altura
+        g.drawString(title, xTitle, yTitle);
+
+        // Posiciona as opções
+        int xPlay = (Constants.WINDOW_WIDTH - fm.stringWidth(playOption)) / 2;
+        int yPlay = (Constants.WINDOW_HEIGHT - fm.getHeight()) / 2;
+        g.drawString(playOption, xPlay, yPlay);
+
+        int xExit = (Constants.WINDOW_WIDTH - fm.stringWidth(exitOption)) / 2;
+        int yExit = yPlay + 50; // Espaçamento de 50px abaixo da opção de jogar
+        g.drawString(exitOption, xExit, yExit);
+    }
+
+    public void renderPause(Graphics g) {
+        String message1 = "'P' TO CONTINUE";
+        String message2 = "'ESC' TO QUIT";
+
         Font font = new Font("Arial", Font.BOLD, 30);
         g.setFont(font);
 
         // Obter o FontMetrics para calcular as dimensões do texto
         FontMetrics fm = g.getFontMetrics(font);
 
-        // Calcular a posição para centralizar o texto
-        int x = (Constants.WINDOW_WIDTH - fm.stringWidth(message)) / 2; // Posição X centralizada
-        int y = (Constants.WINDOW_HEIGHT - fm.getHeight()) / 2 + fm.getAscent(); // Posição Y centralizada
+        // Calcular a posição para o primeiro texto ('P' TO CONTINUE)
+        int x1 = (Constants.WINDOW_WIDTH - fm.stringWidth(message1)) / 2;
+        int y1 = (Constants.WINDOW_HEIGHT - fm.getHeight()) / 2;
 
-        // Escurecer fundo da tela
+        // Calcular a posição para o segundo texto ('ESC' TO QUIT)
+        int x2 = (Constants.WINDOW_WIDTH - fm.stringWidth(message2)) / 2;
+        int y2 = y1 + fm.getHeight() + 10;
+
+        // Escurecer a tela
         g.setColor(new Color(0, 0, 0, 200));
-        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT); 
 
-        // Desenhar os textos
+        // Desenhar as mensagens
         g.setColor(Color.WHITE);
-        g.drawString(message, x, y);
+        g.drawString(message1, x1, y1);
+        g.drawString(message2, x2, y2);
     }
 
     /*********************************
@@ -156,6 +223,12 @@ public class Game extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setBackground(Color.gray);
+
+        if (currentState == GameState.MENU) {
+            renderMenu(g);
+            return;
+        }
+
         bg.render(g);
 
         // terrainManager.renderTerrains(g);
@@ -173,9 +246,8 @@ public class Game extends JPanel {
         // Desenhando o Player
         player.render(g);
 
-        if (inputManager.pause) {
-            messagePause(g);
-            return;
+        if (currentState == GameState.PAUSE) {
+            renderPause(g);
         }
     }
 }

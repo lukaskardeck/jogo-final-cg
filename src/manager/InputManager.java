@@ -3,11 +3,12 @@ package manager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class InputManager extends KeyAdapter{
+public class InputManager extends KeyAdapter {
 
-    public boolean pause;
-    public boolean unpause;
-    
+    public boolean escape;
+    public boolean enter;
+    public boolean p;
+
     public boolean key_player_up;
     public boolean key_player_right;
     public boolean key_player_down;
@@ -19,7 +20,9 @@ public class InputManager extends KeyAdapter{
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_ESCAPE -> pause = !pause;
+            case KeyEvent.VK_ESCAPE -> escape = true;
+            case KeyEvent.VK_ENTER -> enter = true;
+            case KeyEvent.VK_P -> p = true;
             case KeyEvent.VK_W -> key_player_up = true;
             case KeyEvent.VK_A -> key_player_left = true;
             case KeyEvent.VK_S -> key_player_down = true;
@@ -40,5 +43,4 @@ public class InputManager extends KeyAdapter{
         }
     }
 
-    
 }
