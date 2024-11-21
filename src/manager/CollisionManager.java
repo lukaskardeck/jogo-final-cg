@@ -6,6 +6,10 @@ import java.util.Stack;
 import entities.Enemy;
 import entities.Player;
 import entities.PlayerShot;
+import entities.Terrain;
+import shapes.RectangleShape;
+import shapes.Shape;
+import shapes.TriangleShape;
 import utils.Constants;
 
 public class CollisionManager {
@@ -51,7 +55,8 @@ public class CollisionManager {
                         // Colisão com a parte de cima do inimigo
                         && ps.posY + ps.height > e.posY
                         // Colisão com a parte de baixo do inimigo
-                        && ps.posY < e.posY + e.height) {
+                        && ps.posY < e.posY + e.height
+                        && ps.posX < e.posX + e.width) {
                     stackShots.push(listShots.remove(i));
                     stackEnemies.push(listEnemies.remove(j));
                 }
@@ -88,12 +93,28 @@ public class CollisionManager {
     }
 
     public void checkColisionEnemyWithLeftWindow(
-        Stack<Enemy> stackEnemies, 
-        ArrayList<Enemy> listEnemies) {
+            Stack<Enemy> stackEnemies,
+            ArrayList<Enemy> listEnemies) {
         for (int i = 0; i < listEnemies.size(); i++) {
             Enemy e = listEnemies.get(i);
             if (e.posX + e.width < 0) {
-                stackEnemies.push(listEnemies.remove(i));  
+                stackEnemies.push(listEnemies.remove(i));
+            }
+        }
+    }
+
+    public void checkColisionPlayerWithTerrain(Player player, ArrayList<Shape> shapes) {
+        for (Shape shape : shapes) {
+            if (shape instanceof RectangleShape) {
+                RectangleShape rect = (RectangleShape) shape;
+                if (rect.posX < Constants.WINDOW_WIDTH) {
+                    if (player.posX + player.width > rect.posX &&
+                            player.posY + player.height > rect.posY &&
+                            player.posX < rect.posX + rect.width &&
+                            player.posY < rect.posY + rect.height) {
+                        System.out.println("GAMEOVER");
+                    }
+                }
             }
         }
     }

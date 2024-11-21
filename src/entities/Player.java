@@ -2,6 +2,7 @@ package entities;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -26,10 +27,10 @@ public class Player {
     public BufferedImage sprite;
 
     public Player() {
-        this.posX = 100;
-        this.posY = 100;
         this.width = 100;
         this.height = 49;
+        this.posX = 20;
+        this.posY = Constants.WINDOW_HEIGHT / 2 - this.height;
 
         this.stackShots = new Stack<>();
         for (int i = 0; i < Constants.NUM_SHOTS; i++) {
@@ -44,12 +45,10 @@ public class Player {
         }
     }
 
-
     public void move() {
         this.posX += this.velX;
         this.posY += this.velY;
     }
-
 
     public void updateVelocityPlayer(InputManager input) {
         float pvm = Constants.PLAYER_VELOCITY_MODULE;
@@ -78,15 +77,13 @@ public class Player {
         // 'spawn' do tiro no game
         if (inputHandler.shot && !stackShots.isEmpty()) {
             // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
-            if (listShots.isEmpty() || listShots.get(listShots.size() - 1).posX > (this.posX + this.width + 50)) {
+            if (listShots.isEmpty() || listShots.get(listShots.size() - 1).posX > (this.posX + this.width + 200)) {
                 PlayerShot ps = stackShots.pop();
                 ps.respawn(this);
                 listShots.add(ps);
             }
         }
-        
     }
-
 
     public void shoot() {
         // Movimentando o disparo na tela (atirando)
@@ -96,10 +93,10 @@ public class Player {
         }
     }
 
-
     public void render(Graphics g) {
-        //g.setColor(Color.green);
-        //g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
-        g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
+        g.setColor(Color.white);
+        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int)
+        this.height);
+        // g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
 }

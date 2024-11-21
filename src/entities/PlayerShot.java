@@ -34,7 +34,7 @@ public class PlayerShot {
     }
 
     public void render(Graphics g) {
-        g.setColor(Color.green);
+        g.setColor(Color.black);
         g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
     }
 }

@@ -9,9 +9,9 @@ import java.util.Stack;
 
 import javax.swing.JPanel;
 
-import entities.Background;
 import entities.Enemy;
 import entities.Player;
+import manager.BackgroundManager;
 import manager.CollisionManager;
 import manager.InputManager;
 import manager.TerrainManager;
@@ -25,7 +25,7 @@ public class Game extends JPanel {
     public ArrayList<Enemy> listEnemies;
     public CollisionManager collisionManager;
     public InputManager inputManager;
-    public Background bg;
+    public BackgroundManager bg;
     public TerrainManager terrainManager;
 
     public Game() {
@@ -35,7 +35,7 @@ public class Game extends JPanel {
         listEnemies = new ArrayList<>();
         inputManager = new InputManager();
         collisionManager = new CollisionManager();
-        bg = new Background();
+        bg = new BackgroundManager();
         terrainManager = new TerrainManager();
 
         for (int i = 0; i < Constants.NUM_ENEMY; i++) {
@@ -96,20 +96,22 @@ public class Game extends JPanel {
     public void update() {
         if (currentState == GameState.GAME) {
             bg.moveScenes();
-            bg.reposition();
+            // bg.reposition();
 
-            terrainManager.moveTerrains(-3);
+            // terrainManager.moveTerrains(-2);
+            terrainManager.moveTerrain();
 
             player.updateVelocityPlayer(inputManager);
             player.move();
+            spawnEnemies();
             collisionManager.checkColisionPlayerWithWindow(player);
             collisionManager.checkColisionPlayerWithEnemy(player, stackEnemies, listEnemies);
+            collisionManager.checkColisionPlayerWithTerrain(player, terrainManager.shapes);
 
             player.spawnShot(inputManager);
             player.shoot();
             collisionManager.checkColisionPlayerShotsWithWindow(player.stackShots, player.listShots);
 
-            spawnEnemies();
             collisionManager.checkColisionEnemyWithLeftWindow(stackEnemies, listEnemies);
             collisionManager.checkColisionPlayerShotsWithEnemy(
                     player.stackShots,
@@ -147,7 +149,7 @@ public class Game extends JPanel {
             // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
             boolean shouldSpawnEnemy = listEnemies.isEmpty() ||
                     listEnemies.get(listEnemies.size() - 1).posX +
-                            listEnemies.get(listEnemies.size() - 1).width + 200 < Constants.WINDOW_WIDTH;
+                            listEnemies.get(listEnemies.size() - 1).width + 250 < Constants.WINDOW_WIDTH;
 
             if (shouldSpawnEnemy) {
                 Enemy e = stackEnemies.pop();
@@ -222,7 +224,7 @@ public class Game extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(Color.gray);
+        setBackground(Color.black);
 
         if (currentState == GameState.MENU) {
             renderMenu(g);
@@ -231,7 +233,7 @@ public class Game extends JPanel {
 
         bg.render(g);
 
-        // terrainManager.renderTerrains(g);
+        terrainManager.renderTerrains(g);
 
         // Desenhando os disparos do jogador (PlayerShot)
         for (int i = 0; i < player.listShots.size(); i++) {
