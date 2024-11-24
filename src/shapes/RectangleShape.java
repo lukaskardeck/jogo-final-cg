@@ -8,6 +8,7 @@ import utils.Constants;
 public class RectangleShape implements Shape {
     public float posX;
     public float posY;
+    public float velX;
     public float width;
     public float height;
     public Color color;
@@ -101,6 +102,7 @@ public class RectangleShape implements Shape {
 
     @Override
     public void move(float velX) {
-        this.posX += velX;
+        this.velX = velX;
+        this.posX += this.velX;
     }
 }

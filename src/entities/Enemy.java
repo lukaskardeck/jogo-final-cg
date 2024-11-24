@@ -26,9 +26,9 @@ public class Enemy {
         this.width = 45;
         this.height = 36;
         this.posX = Constants.WINDOW_WIDTH;
-        this.posY = random.nextFloat((568 - this.height) - (200 + this.height)) + (200 + this.height);
+        this.posY = random.nextFloat((608 - this.height) - (160 + this.height)) + (160 + this.height);
         this.velX = -Constants.ENEMY_VELOCITY_MODULE;
-        this.velY = 10;
+        this.velY = 8;
 
         try {
             this.sprite = ImageIO.read(getClass().getResource("../assets/images/inimigo.png"));
@@ -40,7 +40,7 @@ public class Enemy {
     public void move() {
         this.posX += this.velX;
 
-        if (this.posY < 200 || this.posY + this.height > 568) {
+        if (this.posY < 160 || this.posY + this.height > 608) {
             this.velY *= -1;
         }
 
@@ -50,7 +50,7 @@ public class Enemy {
     public void respawn() {
         this.posX = Constants.WINDOW_WIDTH;
         // this.posY = new Random().nextFloat(Constants.WINDOW_HEIGHT - this.height);
-        this.posY = random.nextFloat((568 - this.height) - (200 + this.height)) + (200 + this.height);
+        this.posY = random.nextFloat((608 - this.height) - (160 + this.height)) + (160 + this.height);
     }
 
     public void render(Graphics g) {

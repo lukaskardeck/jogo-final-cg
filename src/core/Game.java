@@ -57,13 +57,14 @@ public class Game extends JPanel {
      * 
      *********************************/
     public void handlerEvents() {
-        if (currentState == GameState.MENU) {
+        if (currentState == GameState.MENU || currentState == GameState.GAMEOVER) {
             // Iniciar o jogo
             if (inputManager.enter) {
+                restartGame();
                 currentState = GameState.GAME;
                 inputManager.enter = false;
-            
-            // Fechar o jogo
+
+                // Fechar o jogo
             } else if (inputManager.escape) {
                 System.exit(0);
             }
@@ -104,20 +105,24 @@ public class Game extends JPanel {
             player.updateVelocityPlayer(inputManager);
             player.move();
             spawnEnemies();
-            collisionManager.checkColisionPlayerWithWindow(player);
-            collisionManager.checkColisionPlayerWithEnemy(player, stackEnemies, listEnemies);
-            collisionManager.checkColisionPlayerWithTerrain(player, terrainManager.shapes);
+            collisionManager.checkCollisionPlayerWithWindow(player);
+            collisionManager.checkCollisionPlayerWithEnemy(player, stackEnemies, listEnemies);
+            collisionManager.checkCollisionPlayerWithTerrain(player, terrainManager.shapes);
 
             player.spawnShot(inputManager);
             player.shoot();
-            collisionManager.checkColisionPlayerShotsWithWindow(player.stackShots, player.listShots);
+            collisionManager.checkCollisionPlayerShotsWithWindow(player.stackShots, player.listShots);
 
-            collisionManager.checkColisionEnemyWithLeftWindow(stackEnemies, listEnemies);
-            collisionManager.checkColisionPlayerShotsWithEnemy(
+            collisionManager.checkCollisionEnemyWithLeftWindow(stackEnemies, listEnemies);
+            collisionManager.checkCollisionPlayerShotsWithEnemy(
                     player.stackShots,
                     player.listShots,
                     stackEnemies,
                     listEnemies);
+            
+            if (player.life <= 0) {
+                currentState = GameState.GAMEOVER;
+            }
         }
     }
 
@@ -161,6 +166,23 @@ public class Game extends JPanel {
         for (int i = 0; i < listEnemies.size(); i++) {
             listEnemies.get(i).move();
         }
+    }
+
+    public void restartGame() {
+        player.life = 3;
+        player.posX = 20;
+        player.posY = Constants.WINDOW_HEIGHT / 2 - player.height;
+
+        System.out.println(listEnemies.size());
+
+        while (!listEnemies.isEmpty()) {
+            stackEnemies.push(listEnemies.remove(0));
+        }        
+
+        while (!player.listShots.isEmpty()) {
+            player.stackShots.push(player.listShots.remove(0));
+        }
+        
     }
 
     public void renderMenu(Graphics g) {
@@ -208,12 +230,65 @@ public class Game extends JPanel {
 
         // Escurecer a tela
         g.setColor(new Color(0, 0, 0, 200));
-        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT); 
+        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
         // Desenhar as mensagens
         g.setColor(Color.WHITE);
         g.drawString(message1, x1, y1);
         g.drawString(message2, x2, y2);
+    }
+
+    public void renderGameOver(Graphics g) {
+        String title = "GAMEOVER";
+        String playOption = "Press ENTER to Restart";
+        String exitOption = "Press ESC to Quit";
+
+        // Escurecer a tela
+        g.setColor(new Color(0, 0, 0, 200));
+        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+
+        Font font = new Font("Arial", Font.BOLD, 30);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+
+        // Posiciona o título
+        FontMetrics fm = g.getFontMetrics(font);
+        int xTitle = (Constants.WINDOW_WIDTH - fm.stringWidth(title)) / 2;
+        int yTitle = Constants.WINDOW_HEIGHT / 5; // 1/5 da tela de altura
+        g.drawString(title, xTitle, yTitle);
+
+        // Posiciona as opções
+        int xPlay = (Constants.WINDOW_WIDTH - fm.stringWidth(playOption)) / 2;
+        int yPlay = (Constants.WINDOW_HEIGHT - fm.getHeight()) / 2;
+        g.drawString(playOption, xPlay, yPlay);
+
+        int xExit = (Constants.WINDOW_WIDTH - fm.stringWidth(exitOption)) / 2;
+        int yExit = yPlay + 50; // Espaçamento de 50px abaixo da opção de jogar
+        g.drawString(exitOption, xExit, yExit);
+    }
+
+    public void renderPlayerLife(Graphics g) {
+        Font font = new Font("Arial", Font.BOLD, 30);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+
+        String msg = "LIFE: " + player.life;
+        int xMsg = 20;
+        int yMsg = 40;
+
+        g.drawString(msg, xMsg, yMsg);
+    }
+
+    public void renderPlayerShots(Graphics g) {
+        Font font = new Font("Arial", Font.BOLD, 30);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+
+        String msg = player.stackShots.size() + "/" + Constants.NUM_SHOTS;
+        int xMsg = Constants.WINDOW_WIDTH - 100;
+        int yMsg = 40;
+
+        g.drawString(msg, xMsg, yMsg);
     }
 
     /*********************************
@@ -248,8 +323,15 @@ public class Game extends JPanel {
         // Desenhando o Player
         player.render(g);
 
+        renderPlayerLife(g);
+        renderPlayerShots(g);
+
         if (currentState == GameState.PAUSE) {
             renderPause(g);
+        }
+
+        else if (currentState == GameState.GAMEOVER) {
+            renderGameOver(g);
         }
     }
 }

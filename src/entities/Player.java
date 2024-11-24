@@ -14,6 +14,8 @@ import utils.Constants;
 public class Player {
     public final int NUM_SHOTS = 20;
 
+    public int life;
+    
     public float width;
     public float height;
     public float posX;
@@ -27,6 +29,8 @@ public class Player {
     public BufferedImage sprite;
 
     public Player() {
+        this.life = 3;
+        
         this.width = 100;
         this.height = 49;
         this.posX = 20;
@@ -74,13 +78,18 @@ public class Player {
     }
 
     public void spawnShot(InputManager inputHandler) {
-        // 'spawn' do tiro no game
+        // Controle de quantos disparos consecutivos já foram feitos
         if (inputHandler.shot && !stackShots.isEmpty()) {
-            // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
-            if (listShots.isEmpty() || listShots.get(listShots.size() - 1).posX > (this.posX + this.width + 200)) {
-                PlayerShot ps = stackShots.pop();
-                ps.respawn(this);
-                listShots.add(ps);
+            // Caso não haja disparos ou o último grupo de disparos já espaçou 200px
+            if (listShots.isEmpty() || (listShots.get(listShots.size() - 1).posX > this.posX + this.width + 400)) {
+                for (int i = 0; i < 3; i++) { // Gerar 3 disparos seguidos
+                    if (!stackShots.isEmpty()) {
+                        PlayerShot ps = stackShots.pop();
+                        ps.respawn(this); // Configura posição inicial baseada no jogador
+                        ps.posX += i * 30; // Espaçamento de 10px entre os disparos
+                        listShots.add(ps);
+                    }
+                }
             }
         }
     }

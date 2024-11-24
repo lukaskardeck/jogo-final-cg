@@ -15,7 +15,7 @@ public class PlayerShot {
     public PlayerShot() {
         this.width = 8;
         this.height = 4;
-        this.velX = 10;
+        this.velX = 7;
     }
 
     public void setPosition(float posX, float posY) {
