@@ -8,14 +8,15 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import utils.Constants;
+import utils.Resource;
 
 public class Enemy {
-    public float posX;
-    public float posY;
-    public float velX;
-    public float velY;
-    public float width;
-    public float height;
+    public double posX;
+    public double posY;
+    public double velX;
+    public double velY;
+    public double width;
+    public double height;
 
     public Random random;
 
@@ -26,7 +27,7 @@ public class Enemy {
         this.width = 45;
         this.height = 36;
         this.posX = Constants.WINDOW_WIDTH;
-        this.posY = random.nextFloat((608 - this.height) - (160 + this.height)) + (160 + this.height);
+        this.posY = random.nextDouble((608 - this.height) - (160 + this.height)) + (160 + this.height);
         this.velX = -Constants.ENEMY_VELOCITY_MODULE;
         this.velY = 8;
 
@@ -38,24 +39,31 @@ public class Enemy {
     }
 
     public void move() {
-        this.posX += this.velX;
+        double velocityFactor = Resource.getInstance().deltaTime * 60;
+        this.posX += this.velX * velocityFactor;
+        this.posY += this.velY * velocityFactor;
 
-        if (this.posY < 160 || this.posY + this.height > 608) {
+        if (this.posY < 160) {
+            this.posY = 160;
             this.velY *= -1;
         }
 
-        this.posY += this.velY;
+        else if (this.posY + this.height > 608) {
+            this.posY = 608 - this.height;
+            this.velY *= -1;
+        }
+
     }
 
     public void respawn() {
         this.posX = Constants.WINDOW_WIDTH;
         // this.posY = new Random().nextFloat(Constants.WINDOW_HEIGHT - this.height);
-        this.posY = random.nextFloat((608 - this.height) - (160 + this.height)) + (160 + this.height);
+        this.posY = random.nextDouble((608 - this.height) - (160 + this.height)) + (160 + this.height);
     }
 
     public void render(Graphics g) {
         g.setColor(new Color(250, 215, 150));
         g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
-        // g.drawImage(sprite, (int) this.posX - 5, (int) this.posY - 3, null);
+        // g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
 }

@@ -12,6 +12,7 @@ public class TerrainManager {
     public ArrayList<Shape> shapes;
     public ArrayList<Shape> upShapes;
     public ArrayList<Shape> downShapes;
+    public ArrayList<ArrayList<Shape>> shapesTest;
 
     // public RectangleShape 
     //     r1,
@@ -35,6 +36,7 @@ public class TerrainManager {
         shapes = new ArrayList<>();
         upShapes = new ArrayList<>();
         downShapes = new ArrayList<>();
+        shapesTest = new ArrayList<>();
 
         Color terrainColor = new Color(115, 45, 40);
 
@@ -56,6 +58,8 @@ public class TerrainManager {
             shapes.add(upShapes.get(i));
         }
 
+        // shapesTest.add(upShapes);
+
         for (int i = 0; i < 4; i++) {
             if (i % 2 == 0) {
                 RectangleShape r1 = new RectangleShape(512, 140, terrainColor);
@@ -73,6 +77,8 @@ public class TerrainManager {
         for (int i = 0; i < downShapes.size(); i++) {
             shapes.add(downShapes.get(i));
         }
+
+        // shapesTest.add(downShapes);
 
         // r1 = new RectangleShape(317, 136, terrainColor);
         // r1.setPosition(0, Constants.WINDOW_HEIGHT - r1.height);

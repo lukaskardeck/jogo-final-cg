@@ -10,18 +10,21 @@ import javax.imageio.ImageIO;
 
 import manager.InputManager;
 import utils.Constants;
+import utils.Resource;
 
 public class Player {
     public final int NUM_SHOTS = 20;
 
     public int life;
-    
-    public float width;
-    public float height;
-    public float posX;
-    public float posY;
-    public float velX;
-    public float velY;
+
+    public double width;
+    public double height;
+    public double posX;
+    public double posY;
+    public double velX;
+    public double velY;
+
+    double timeShot = 0;
 
     public Stack<PlayerShot> stackShots;
     public ArrayList<PlayerShot> listShots;
@@ -30,7 +33,7 @@ public class Player {
 
     public Player() {
         this.life = 3;
-        
+
         this.width = 100;
         this.height = 49;
         this.posX = 20;
@@ -50,8 +53,9 @@ public class Player {
     }
 
     public void move() {
-        this.posX += this.velX;
-        this.posY += this.velY;
+        double velocityFactor = Resource.getInstance().deltaTime * 60;
+        this.posX += this.velX * velocityFactor;
+        this.posY += this.velY * velocityFactor;
     }
 
     public void updateVelocityPlayer(InputManager input) {
@@ -78,18 +82,55 @@ public class Player {
     }
 
     public void spawnShot(InputManager inputHandler) {
+        timeShot += Resource.getInstance().deltaTime;
+        // // Controle de quantos disparos consecutivos já foram feitos
+        // if (inputHandler.shot && !stackShots.isEmpty()) {
+        // timeShot += Time.getInstance().deltaTime;
+        // // Caso não haja disparos ou o último grupo de disparos já espaçou 200px
+        // if (listShots.isEmpty() || (listShots.get(listShots.size() - 1).posX >
+        // this.posX + this.width + 400)) {
+        // for (int i = 0; i < 3; i++) { // Gerar 3 disparos seguidos
+        // if (!stackShots.isEmpty()) {
+        // PlayerShot ps = stackShots.pop();
+        // ps.respawn(this); // Configura posição inicial baseada no jogador
+        // ps.posX += i * 15; // Espaçamento de 15px entre os disparos
+        // listShots.add(ps);
+        // }
+        // }
+        // }
+        // }
+
+        // // Controle de quantos disparos consecutivos já foram feitos
+        // if (inputHandler.shot) {
+        // timeShot += Time.getInstance().deltaTime;
+        // // Caso não haja disparos ou o último grupo de disparos já espaçou 200px
+        // if (listShots.isEmpty() || (timeShot >= 1.0)) {
+        // for (int i = 0; i < 3; i++) { // Gerar 3 disparos seguidos
+        // if (!stackShots.isEmpty()) {
+        // PlayerShot ps = stackShots.pop();
+        // ps.respawn(this); // Configura posição inicial baseada no jogador
+        // ps.posX += i * 15; // Espaçamento de 15px entre os disparos
+        // listShots.add(ps);
+        // timeShot = 0.0;
+        // }
+        // }
+        // }
+        // }
+
         // Controle de quantos disparos consecutivos já foram feitos
-        if (inputHandler.shot && !stackShots.isEmpty()) {
+        if (inputHandler.shot) {
+            // timeShot += Time.getInstance().deltaTime;
             // Caso não haja disparos ou o último grupo de disparos já espaçou 200px
-            if (listShots.isEmpty() || (listShots.get(listShots.size() - 1).posX > this.posX + this.width + 400)) {
+            if (listShots.isEmpty() || (timeShot >= 0.8)) {
                 for (int i = 0; i < 3; i++) { // Gerar 3 disparos seguidos
                     if (!stackShots.isEmpty()) {
                         PlayerShot ps = stackShots.pop();
                         ps.respawn(this); // Configura posição inicial baseada no jogador
-                        ps.posX += i * 30; // Espaçamento de 10px entre os disparos
+                        ps.posX += i * 15; // Espaçamento de 15px entre os disparos
                         listShots.add(ps);
                     }
                 }
+                timeShot = 0.0;
             }
         }
     }
@@ -104,8 +145,7 @@ public class Player {
 
     public void render(Graphics g) {
         g.setColor(Color.white);
-        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int)
-        this.height);
+        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
         // g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
 }

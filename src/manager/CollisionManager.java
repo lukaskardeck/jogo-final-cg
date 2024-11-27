@@ -128,7 +128,7 @@ public class CollisionManager {
             if (shape instanceof RectangleShape rect) {
                 // Verificar colisão apenas se o terreno estiver visível na tela
                 if (rect.posX < Constants.WINDOW_WIDTH) {
-                    // Verificar colisão (interseção de retângulos)
+                    // Verificar colisão
                     boolean isColliding = player.posX + player.width > rect.posX &&
                             player.posY + player.height > rect.posY &&
                             player.posX < rect.posX + rect.width &&
@@ -158,13 +158,13 @@ public class CollisionManager {
                             player.velY = 0; // Parar movimento para baixo
                         } 
                         
-                        // Colisão lateral esquerda do terreno
+                        // Colisão lateral direita do terreno
                         else if (minOverlap == overlapLeft) {
                             player.posX = rect.posX + rect.width; // Empurrar para a direita
                             player.velX = 0;
                         } 
                         
-                        // Colisão lateral direita do terreno
+                        // Colisão lateral esquerda do terreno
                         else if (minOverlap == overlapRight) {
                             player.posX = rect.posX - player.width;
                             player.velX = 0;

@@ -3,19 +3,21 @@ package entities;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import utils.Resource;
+
 public class PlayerShot {
-    public float posX;
-    public float posY;
-    public float velX;
-    public float velY;
-    public float width;
-    public float height;
+    public double posX;
+    public double posY;
+    public double velX;
+    public double velY;
+    public double width;
+    public double height;
     public boolean isActive;
 
     public PlayerShot() {
         this.width = 8;
         this.height = 4;
-        this.velX = 7;
+        this.velX = 15;
     }
 
     public void setPosition(float posX, float posY) {
@@ -24,8 +26,9 @@ public class PlayerShot {
     }
 
     public void move() {
-        this.posX += this.velX;
-        this.posY += this.velY;
+        double velocityFactor = Resource.getInstance().deltaTime * 60;
+        this.posX += this.velX * velocityFactor;
+        this.posY += this.velY * velocityFactor;
     }
 
     public void respawn(Player player) {
