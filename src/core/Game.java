@@ -120,7 +120,7 @@ public class Game extends JPanel {
                     enemyManager.stackEnemies,
                     enemyManager.listEnemies);
 
-            if (player.life <= 0 || player.posX < 0) {
+            if (player.life <= 0 || player.posX + 15 < 0) {
                 currentState = GameState.GAMEOVER;
             }
         }

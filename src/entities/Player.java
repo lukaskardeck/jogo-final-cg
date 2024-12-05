@@ -36,9 +36,9 @@ public class Player {
         this.life = 3;
         this.life = 0;
 
-        this.width = 80;
+        this.width = 70;
         this.height = 80;
-        this.posX = 20;
+        this.posX = 25;
         this.posY = Constants.WINDOW_HEIGHT / 2 - this.height;
 
         this.stackShots = new Stack<>();
@@ -119,6 +119,7 @@ public class Player {
 
     public void restart() {
         this.life = 3;
+        this.points = 0;
         this.posX = 20;
         this.posY = Constants.WINDOW_HEIGHT / 2 - this.height;
     }
@@ -130,8 +131,8 @@ public class Player {
     }
 
     public void render(Graphics g) {
-        // g.setColor(Color.white);
+        // g.setColor(new Color(200, 200, 200, 200));
         // g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
-        g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
+        g.drawImage(sprite, (int) this.posX - 5, (int) this.posY, null);
     }
 }

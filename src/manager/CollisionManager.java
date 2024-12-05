@@ -47,12 +47,8 @@ public class CollisionManager {
             PlayerShot ps = player.listShots.get(i);
             for (int j = 0; j < listEnemies.size(); j++) {
                 Enemy e = listEnemies.get(j);
-                if (
-                // Colisão com o lado esquerdo do inimigo
-                ps.posX + ps.width > e.posX
-                        // Colisão com a parte de cima do inimigo
+                if (ps.posX + ps.width - 10> e.posX
                         && ps.posY + ps.height > e.posY
-                        // Colisão com a parte de baixo do inimigo
                         && ps.posY < e.posY + e.height
                         && ps.posX < e.posX + e.width) {
                     player.stackShots.push(player.listShots.remove(i));
@@ -82,9 +78,9 @@ public class CollisionManager {
 
         for (int i = 0; i < listEnemies.size(); i++) {
             Enemy e = listEnemies.get(i);
-            if (player.posX + player.width - 20 > e.posX &&
+            if (player.posX + player.width - 10 > e.posX &&
                     player.posY + player.height - 20 > e.posY &&
-                    player.posX + 20 < e.posX + e.width &&
+                    player.posX + 10 < e.posX + e.width &&
                     player.posY + 20 < e.posY + e.height) {
                 stackEnemies.push(listEnemies.remove(i));
                 player.life--;
@@ -144,26 +140,27 @@ public class CollisionManager {
                         double[] overLaps = new double[] { overlapTop, overlapBottom, overlapLeft, overlapRight };
                         double minOverlap = Arrays.stream(overLaps).min().getAsDouble();
 
-                        // ↓ Determinar o lado da colisão (o menor overlap indica a direção da colisão) ↓
+                        // ↓ Determinar o lado da colisão (o menor overlap indica a direção da colisão)
+                        // ↓
 
                         // Colisão com a parte superior do terreno
                         if (minOverlap == overlapTop) {
                             player.posY = rect.posY + rect.height;
                             player.velY = 0;
-                        } 
-                        
+                        }
+
                         // Colisão com a parte inferior do terreno
                         else if (minOverlap == overlapBottom) {
                             player.posY = rect.posY - player.height;
                             player.velY = 0; // Parar movimento para baixo
-                        } 
-                        
+                        }
+
                         // Colisão lateral direita do terreno
                         else if (minOverlap == overlapLeft) {
                             player.posX = rect.posX + rect.width; // Empurrar para a direita
                             player.velX = 0;
-                        } 
-                        
+                        }
+
                         // Colisão lateral esquerda do terreno
                         else if (minOverlap == overlapRight) {
                             player.posX = rect.posX - player.width;

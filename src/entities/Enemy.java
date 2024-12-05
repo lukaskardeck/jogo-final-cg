@@ -78,7 +78,7 @@ public class Enemy {
     }
 
     public void render(Graphics g) {
-        // g.setColor(new Color(250, 215, 150));
+        // g.setColor(new Color(250, 215, 150, 200));
         // g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
         g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
