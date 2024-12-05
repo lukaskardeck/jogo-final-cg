@@ -2,6 +2,7 @@ package manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Queue;
 import java.util.Stack;
 
 import entities.Enemy;
@@ -40,7 +41,7 @@ public class CollisionManager {
 
     public void checkCollisionPlayerShotsWithEnemy(
             Player player,
-            Stack<Enemy> stackEnemies,
+            Queue<Enemy> queueEnemies,
             ArrayList<Enemy> listEnemies) {
 
         for (int i = 0; i < player.listShots.size(); i++) {
@@ -52,7 +53,7 @@ public class CollisionManager {
                         && ps.posY < e.posY + e.height
                         && ps.posX < e.posX + e.width) {
                     player.stackShots.push(player.listShots.remove(i));
-                    stackEnemies.push(listEnemies.remove(j));
+                    queueEnemies.add(listEnemies.remove(j));
                     player.points += 10;
                 }
             }
@@ -73,7 +74,7 @@ public class CollisionManager {
 
     public void checkCollisionPlayerWithEnemy(
             Player player,
-            Stack<Enemy> stackEnemies,
+            Queue<Enemy> queueEnemies,
             ArrayList<Enemy> listEnemies) {
 
         for (int i = 0; i < listEnemies.size(); i++) {
@@ -82,19 +83,19 @@ public class CollisionManager {
                     player.posY + player.height - 20 > e.posY &&
                     player.posX + 10 < e.posX + e.width &&
                     player.posY + 20 < e.posY + e.height) {
-                stackEnemies.push(listEnemies.remove(i));
+                    queueEnemies.add(listEnemies.remove(i));
                 player.life--;
             }
         }
     }
 
     public void checkCollisionEnemyWithLeftWindow(
-            Stack<Enemy> stackEnemies,
+        Queue<Enemy> queueEnemies,
             ArrayList<Enemy> listEnemies) {
         for (int i = 0; i < listEnemies.size(); i++) {
             Enemy e = listEnemies.get(i);
             if (e.posX + e.width < 0) {
-                stackEnemies.push(listEnemies.remove(i));
+                queueEnemies.add(listEnemies.remove(i));
             }
         }
     }

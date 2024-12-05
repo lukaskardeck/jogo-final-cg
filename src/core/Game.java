@@ -106,7 +106,7 @@ public class Game extends JPanel {
             player.updateVelocityPlayer(inputManager);
             player.move();
             enemyManager.spawnEnemies();
-            collisionManager.checkCollisionPlayerWithEnemy(player, enemyManager.stackEnemies, enemyManager.listEnemies);
+            collisionManager.checkCollisionPlayerWithEnemy(player, enemyManager.queueEnemies, enemyManager.listEnemies);
             collisionManager.checkCollisionPlayerWithWindow(player);
             collisionManager.checkCollisionPlayerWithTerrain(player, terrainManager.shapes);
 
@@ -114,10 +114,10 @@ public class Game extends JPanel {
             player.shoot();
             collisionManager.checkCollisionPlayerShotsWithWindow(player.stackShots, player.listShots);
 
-            collisionManager.checkCollisionEnemyWithLeftWindow(enemyManager.stackEnemies, enemyManager.listEnemies);
+            collisionManager.checkCollisionEnemyWithLeftWindow(enemyManager.queueEnemies, enemyManager.listEnemies);
             collisionManager.checkCollisionPlayerShotsWithEnemy(
                     player,
-                    enemyManager.stackEnemies,
+                    enemyManager.queueEnemies,
                     enemyManager.listEnemies);
 
             if (player.life <= 0 || player.posX + 15 < 0) {

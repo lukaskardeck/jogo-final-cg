@@ -2,6 +2,8 @@ package manager;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import entities.Enemy;
@@ -13,7 +15,8 @@ public class EnemyManager {
     public final double MAX_VELOCITY_ENEMY = 7;
     public final double TIME_DECREMENT_INTERVAL_RESPAWN = 8.0;
 
-    public Stack<Enemy> stackEnemies;
+    // public Stack<Enemy> stackEnemies;
+    public Queue<Enemy> queueEnemies;
     public ArrayList<Enemy> listEnemies;
 
     public double timerRespawnEnemy;
@@ -24,13 +27,16 @@ public class EnemyManager {
 
     public EnemyManager() {
         intervalRespawn = 4.0;
-        this.stackEnemies = new Stack<>();
+        // this.stackEnemies = new Stack<>();
+        this.queueEnemies = new LinkedList<>();
         this.listEnemies = new ArrayList<>();
 
         for (int i = 0; i < NUM_ENEMY; i++) {
-            stackEnemies.push(new Enemy());
+            // stackEnemies.push(new Enemy());
+            queueEnemies.add(new Enemy());
         }
-        listEnemies.add(stackEnemies.pop());
+        // listEnemies.add(stackEnemies.pop());
+        listEnemies.add(queueEnemies.poll());
     }
 
     public void spawnEnemies() {
@@ -46,13 +52,13 @@ public class EnemyManager {
             // System.out.println("Novo intervalo de respawn: " + intervalRespawn);
         }
 
-        if (!stackEnemies.isEmpty()) {
+        if (!queueEnemies.isEmpty()) {
             // Condição para adicionar o primeiro inimigo ou espaçar o próximo inimigo
             boolean shouldSpawnEnemy = (Resource.getInstance().timeGame == 0.0) ||
                     (timerRespawnEnemy >= intervalRespawn);
 
             if (shouldSpawnEnemy) {
-                Enemy e = stackEnemies.pop();
+                Enemy e = queueEnemies.poll();
                 e.respawn();
                 e.velX = -newVelEnemy;
                 listEnemies.add(e);
@@ -67,7 +73,7 @@ public class EnemyManager {
 
     public void restart() {
         while (!listEnemies.isEmpty()) {
-            stackEnemies.push(listEnemies.remove(0));
+            queueEnemies.add(listEnemies.remove(0));
         }
 
         intervalRespawn = 4.0;
