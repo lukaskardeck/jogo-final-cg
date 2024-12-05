@@ -48,7 +48,7 @@ public class EnemyManager {
 
         if (!stackEnemies.isEmpty()) {
             // Condição para adicionar o primeiro inimigo ou espaçar o próximo inimigo
-            boolean shouldSpawnEnemy = (Resource.getInstance().timerGame == 0.0) ||
+            boolean shouldSpawnEnemy = (Resource.getInstance().timeGame == 0.0) ||
                     (timerRespawnEnemy >= intervalRespawn);
 
             if (shouldSpawnEnemy) {

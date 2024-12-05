@@ -24,6 +24,10 @@ public class Enemy {
     public Random random;
 
     public BufferedImage sprite;
+    public BufferedImage alienGreen;
+    public BufferedImage alienBlue;
+    public BufferedImage alienYellow;
+    public BufferedImage[] spriteAliens;
 
     public Enemy() {
         this.random = new Random();
@@ -36,10 +40,17 @@ public class Enemy {
         //System.out.println(this.velY);
 
         try {
-            this.sprite = ImageIO.read(getClass().getResource("../assets/images/Alien.png"));
+            // this.sprite = ImageIO.read(getClass().getResource("../assets/images/Alien.png"));
+            this.alienGreen = ImageIO.read(getClass().getResource("../assets/images/alien_green.png"));
+            this.alienBlue = ImageIO.read(getClass().getResource("../assets/images/alien_blue.png"));
+            this.alienYellow = ImageIO.read(getClass().getResource("../assets/images/alien_yellow.png"));
+
         } catch (Exception e) {
             System.out.println("Erro ao carregar a sprite do inimigo");
         }
+
+        spriteAliens = new BufferedImage[]{alienGreen, alienBlue, alienYellow};
+        this.sprite = spriteAliens[random.nextInt(spriteAliens.length)];
     }
 
     public void move() {

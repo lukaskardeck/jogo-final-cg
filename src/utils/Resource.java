@@ -8,7 +8,7 @@ public class Resource {
     // public long currentTime;
     // public long oldTime;
     public double deltaTime;
-    public double timerGame;
+    public double timeGame;
 
     private double r, g, b;
     private boolean restartColor;
@@ -55,6 +55,6 @@ public class Resource {
 
         // System.out.println("r=" + r + ", g=" + g + ", b=" + b);
 
-        return new Color((int)r, (int)g, (int)b);
+        return new Color((int) r, (int) g, (int) b);
     }
 }

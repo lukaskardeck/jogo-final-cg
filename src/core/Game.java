@@ -71,7 +71,7 @@ public class Game extends JPanel {
         }
 
         else if (currentState == GameState.GAME) {
-            Resource.getInstance().timerGame += Resource.getInstance().deltaTime;
+            Resource.getInstance().timeGame += Resource.getInstance().deltaTime;
             // Pausar o jogo
             if (inputManager.p) {
                 currentState = GameState.PAUSE;
@@ -161,7 +161,7 @@ public class Game extends JPanel {
      *********************************/
 
     public void restartGame() {
-        Resource.getInstance().timerGame = 0.0;
+        Resource.getInstance().timeGame = 0.0;
         player.restart();
         player.restartShots();
         enemyManager.restart();
@@ -190,7 +190,7 @@ public class Game extends JPanel {
 
         gameView.renderPlayerLife(g, player);
         gameView.renderPoints(g, player);
-        gameView.renderTimer(g, Resource.getInstance().timerGame);
+        gameView.renderTimer(g, Resource.getInstance().timeGame);
 
         if (currentState == GameState.PAUSE) {
             gameView.renderPause(g);
