@@ -2,15 +2,13 @@ package core;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Stack;
 
 import javax.swing.JPanel;
 
-import entities.Enemy;
 import entities.Player;
 import manager.BackgroundManager;
 import manager.CollisionManager;
+import manager.EnemyManager;
 import manager.InputManager;
 import manager.TerrainManager;
 import utils.Constants;
@@ -18,13 +16,11 @@ import utils.Resource;
 
 public class Game extends JPanel {
     public boolean inGame;
-    public double timer;
 
     public GameState currentState = GameState.MENU;
 
     public Player player;
-    public Stack<Enemy> stackEnemies;
-    public ArrayList<Enemy> listEnemies;
+    public EnemyManager enemyManager;
     public CollisionManager collisionManager;
     public InputManager inputManager;
     public BackgroundManager bg;
@@ -32,25 +28,18 @@ public class Game extends JPanel {
 
     public GameView gameView;
 
-    // private long currentTime;
-    // private long oldTime;
-    // private double deltaTime;
+    private long currentTime;
+    private long oldTime;
 
     public Game() {
         inGame = true;
 
         player = new Player();
-        stackEnemies = new Stack<>();
-        listEnemies = new ArrayList<>();
+        enemyManager = new EnemyManager();
         inputManager = new InputManager();
         collisionManager = new CollisionManager();
         bg = new BackgroundManager();
         terrainManager = new TerrainManager();
-
-        for (int i = 0; i < Constants.NUM_ENEMY; i++) {
-            stackEnemies.push(new Enemy());
-        }
-        listEnemies.add(stackEnemies.pop());
 
         gameView = new GameView();
 
@@ -82,7 +71,7 @@ public class Game extends JPanel {
         }
 
         else if (currentState == GameState.GAME) {
-            timer += Resource.getInstance().deltaTime;
+            Resource.getInstance().timerGame += Resource.getInstance().deltaTime;
             // Pausar o jogo
             if (inputManager.p) {
                 currentState = GameState.PAUSE;
@@ -109,27 +98,27 @@ public class Game extends JPanel {
     public void update() {
         // deltaTime = deltaTime * 60;
         if (currentState == GameState.GAME) {
-            // bg.moveScenes();
+            bg.moveScenes();
 
             terrainManager.moveTerrain();
+            // terrainManager.colorTransition();
 
             player.updateVelocityPlayer(inputManager);
             player.move();
-            spawnEnemies();
+            enemyManager.spawnEnemies();
+            collisionManager.checkCollisionPlayerWithEnemy(player, enemyManager.stackEnemies, enemyManager.listEnemies);
             collisionManager.checkCollisionPlayerWithWindow(player);
-            collisionManager.checkCollisionPlayerWithEnemy(player, stackEnemies, listEnemies);
             collisionManager.checkCollisionPlayerWithTerrain(player, terrainManager.shapes);
 
             player.spawnShot(inputManager);
             player.shoot();
             collisionManager.checkCollisionPlayerShotsWithWindow(player.stackShots, player.listShots);
 
-            collisionManager.checkCollisionEnemyWithLeftWindow(stackEnemies, listEnemies);
+            collisionManager.checkCollisionEnemyWithLeftWindow(enemyManager.stackEnemies, enemyManager.listEnemies);
             collisionManager.checkCollisionPlayerShotsWithEnemy(
-                    player.stackShots,
-                    player.listShots,
-                    stackEnemies,
-                    listEnemies);
+                    player,
+                    enemyManager.stackEnemies,
+                    enemyManager.listEnemies);
 
             if (player.life <= 0 || player.posX < 0) {
                 currentState = GameState.GAMEOVER;
@@ -142,11 +131,10 @@ public class Game extends JPanel {
     }
 
     public void gameloop() {
-        Resource.getInstance().oldTime = System.nanoTime();
+        oldTime = System.nanoTime();
         while (inGame) {
-            Resource.getInstance().currentTime = System.nanoTime();
-            Resource.getInstance().deltaTime = (Resource.getInstance().currentTime - Resource.getInstance().oldTime)
-                    * (1e-9);
+            currentTime = System.nanoTime();
+            Resource.getInstance().deltaTime = (currentTime - oldTime) * (1e-9);
 
             // System.out.println(timer);
 
@@ -154,7 +142,7 @@ public class Game extends JPanel {
             update();
             render();
 
-            Resource.getInstance().oldTime = Resource.getInstance().currentTime;
+            oldTime = currentTime;
 
             try {
                 Thread.sleep(Constants.TIME_PER_FRAME);
@@ -171,40 +159,12 @@ public class Game extends JPanel {
      * MÉTODOS ↓↓↓
      * 
      *********************************/
-    public void spawnEnemies() {
-        if (!stackEnemies.isEmpty()) {
-            // Condição para adicionar o primeiro tiro ou espaçar o próximo tiro
-            boolean shouldSpawnEnemy = listEnemies.isEmpty() ||
-                    listEnemies.get(listEnemies.size() - 1).posX +
-                            listEnemies.get(listEnemies.size() - 1).width + 250 < Constants.WINDOW_WIDTH;
-
-            if (shouldSpawnEnemy) {
-                Enemy e = stackEnemies.pop();
-                e.respawn();
-                listEnemies.add(e);
-            }
-        }
-
-        for (int i = 0; i < listEnemies.size(); i++) {
-            listEnemies.get(i).move();
-        }
-    }
 
     public void restartGame() {
-        timer = 0.0;
-
-        player.life = 3;
-        player.posX = 20;
-        player.posY = Constants.WINDOW_HEIGHT / 2 - player.height;
-
-        while (!listEnemies.isEmpty()) {
-            stackEnemies.push(listEnemies.remove(0));
-        }
-
-        while (!player.listShots.isEmpty()) {
-            player.stackShots.push(player.listShots.remove(0));
-        }
-
+        Resource.getInstance().timerGame = 0.0;
+        player.restart();
+        player.restartShots();
+        enemyManager.restart();
     }
 
     /*********************************
@@ -223,25 +183,14 @@ public class Game extends JPanel {
         }
 
         bg.render(g);
-
         terrainManager.renderTerrains(g);
-
-        // Desenhando os disparos do jogador (PlayerShot)
-        for (int i = 0; i < player.listShots.size(); i++) {
-            player.listShots.get(i).render(g);
-        }
-
-        // Desenhando o Inimigo
-        for (int i = 0; i < listEnemies.size(); i++) {
-            listEnemies.get(i).render(g);
-        }
-
-        // Desenhando o Player
+        player.renderShots(g);
+        enemyManager.render(g);
         player.render(g);
 
         gameView.renderPlayerLife(g, player);
-        gameView.renderMunition(g, player);
-        gameView.renderTimer(g, timer);
+        gameView.renderPoints(g, player);
+        gameView.renderTimer(g, Resource.getInstance().timerGame);
 
         if (currentState == GameState.PAUSE) {
             gameView.renderPause(g);

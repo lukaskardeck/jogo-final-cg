@@ -4,32 +4,41 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.io.InputStream;
+
 import entities.Player;
 import utils.Constants;
 
 public class GameView {
 
-    public void renderMunition(Graphics g, Player player) {
-        Font font = new Font("Arial", Font.BOLD, 30);
-        g.setFont(font);
+    private Font customFont;
+
+    public GameView() {
+        try {
+            // Carrega a fonte como recurso do classpath
+            InputStream is = getClass().getResourceAsStream("../assets/fonts/upheavtt.ttf");
+            customFont = Font.createFont(Font.TRUETYPE_FONT, is);
+            customFont = customFont.deriveFont(Font.BOLD, 30);
+        } catch (Exception e) {
+            System.out.println("Erro ao carregar a fonte!");
+        }
+    }
+
+    public void renderPoints(Graphics g, Player player) {
+        g.setFont(customFont);
         g.setColor(Color.WHITE);
-
-        String msg = player.stackShots.size() + "/" + Constants.NUM_SHOTS;
-        int xMsg = Constants.WINDOW_WIDTH - 100;
-        int yMsg = 40;
-
+        String msg = "POINTS: " + player.points;
+        int xMsg = Constants.WINDOW_WIDTH - 210;
+        int yMsg = 36;
         g.drawString(msg, xMsg, yMsg);
     }
 
     public void renderPlayerLife(Graphics g, Player player) {
-        Font font = new Font("Arial", Font.BOLD, 30);
-        g.setFont(font);
+        g.setFont(customFont);
         g.setColor(Color.WHITE);
-
         String msg = "LIFE: " + player.life;
         int xMsg = 20;
-        int yMsg = 40;
-
+        int yMsg = 36;
         g.drawString(msg, xMsg, yMsg);
     }
 
@@ -42,12 +51,11 @@ public class GameView {
         g.setColor(new Color(0, 0, 0, 200));
         g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
-        Font font = new Font("Arial", Font.BOLD, 30);
-        g.setFont(font);
+        g.setFont(customFont);
         g.setColor(Color.WHITE);
 
         // Posiciona o título
-        FontMetrics fm = g.getFontMetrics(font);
+        FontMetrics fm = g.getFontMetrics(customFont);
         int xTitle = (Constants.WINDOW_WIDTH - fm.stringWidth(title)) / 2;
         int yTitle = Constants.WINDOW_HEIGHT / 5; // 1/5 da tela de altura
         g.drawString(title, xTitle, yTitle);
@@ -66,11 +74,10 @@ public class GameView {
         String message1 = "'P' TO CONTINUE";
         String message2 = "'ESC' TO QUIT";
 
-        Font font = new Font("Arial", Font.BOLD, 30);
-        g.setFont(font);
+        g.setFont(customFont);
 
         // Obter o FontMetrics para calcular as dimensões do texto
-        FontMetrics fm = g.getFontMetrics(font);
+        FontMetrics fm = g.getFontMetrics(customFont);
 
         // Calcular a posição para o primeiro texto ('P' TO CONTINUE)
         int x1 = (Constants.WINDOW_WIDTH - fm.stringWidth(message1)) / 2;
@@ -95,12 +102,11 @@ public class GameView {
         String playOption = "Press ENTER to Play";
         String exitOption = "Press ESC to Quit";
 
-        Font font = new Font("Arial", Font.BOLD, 30);
-        g.setFont(font);
+        g.setFont(customFont);
         g.setColor(Color.WHITE);
 
         // Posiciona o título
-        FontMetrics fm = g.getFontMetrics(font);
+        FontMetrics fm = g.getFontMetrics(customFont);
         int xTitle = (Constants.WINDOW_WIDTH - fm.stringWidth(title)) / 2;
         int yTitle = Constants.WINDOW_HEIGHT / 5; // 1/5 da tela de altura
         g.drawString(title, xTitle, yTitle);
@@ -116,14 +122,13 @@ public class GameView {
     }
 
     public void renderTimer(Graphics g, double timer) {
-        Font font = new Font("Arial", Font.BOLD, 30);
-        FontMetrics fm = g.getFontMetrics(font);
-        g.setFont(font);
+        g.setFont(customFont);
         g.setColor(Color.WHITE);
+        FontMetrics fm = g.getFontMetrics(customFont);
 
-        String msg = "TIME: " + (int)timer;
-        int xMsg = (Constants.WINDOW_WIDTH - fm.stringWidth(msg)) / 2;;
-        int yMsg = 40;
+        String msg = "TIME: " + (int) timer;
+        int xMsg = (Constants.WINDOW_WIDTH - fm.stringWidth(msg)) / 2;
+        int yMsg = 36;
 
         g.drawString(msg, xMsg, yMsg);
     }

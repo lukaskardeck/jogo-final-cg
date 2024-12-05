@@ -18,7 +18,7 @@ public class BackgroundManager {
 
     public BackgroundManager() {
         try {
-            this.img_scene_00 = ImageIO.read(getClass().getResource("../assets/images/bg_00.jpg"));
+            this.img_scene_00 = ImageIO.read(getClass().getResource("../assets/images/bg_01_1.jpg"));
         } catch (IOException e) {
             System.out.println("Erro ao carregar a imagem");
         }
@@ -42,9 +42,9 @@ public class BackgroundManager {
     }
 
     public void render(Graphics g) {
-        g.setColor(new Color(20, 150, 200));
-        g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
-        // g.drawImage(scene01.image, (int) scene01.posX, (int) scene01.posY, null);
-        // g.drawImage(scene02.image, (int) scene02.posX, (int) scene02.posY, null);
+        // g.setColor(new Color(20, 150, 200));
+        // g.fillRect(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        g.drawImage(scene01.image, (int) scene01.posX, (int) scene01.posY, null);
+        g.drawImage(scene02.image, (int) scene02.posX, (int) scene02.posY, null);
     }
 }

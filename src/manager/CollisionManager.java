@@ -39,13 +39,12 @@ public class CollisionManager {
     }
 
     public void checkCollisionPlayerShotsWithEnemy(
-            Stack<PlayerShot> stackShots,
-            ArrayList<PlayerShot> listShots,
+            Player player,
             Stack<Enemy> stackEnemies,
             ArrayList<Enemy> listEnemies) {
 
-        for (int i = 0; i < listShots.size(); i++) {
-            PlayerShot ps = listShots.get(i);
+        for (int i = 0; i < player.listShots.size(); i++) {
+            PlayerShot ps = player.listShots.get(i);
             for (int j = 0; j < listEnemies.size(); j++) {
                 Enemy e = listEnemies.get(j);
                 if (
@@ -56,8 +55,9 @@ public class CollisionManager {
                         // Colisão com a parte de baixo do inimigo
                         && ps.posY < e.posY + e.height
                         && ps.posX < e.posX + e.width) {
-                    stackShots.push(listShots.remove(i));
+                    player.stackShots.push(player.listShots.remove(i));
                     stackEnemies.push(listEnemies.remove(j));
+                    player.points += 10;
                 }
             }
         }
@@ -82,10 +82,10 @@ public class CollisionManager {
 
         for (int i = 0; i < listEnemies.size(); i++) {
             Enemy e = listEnemies.get(i);
-            if (player.posX + player.width > e.posX &&
-                    player.posY + player.height > e.posY &&
-                    player.posX < e.posX + e.width &&
-                    player.posY < e.posY + e.height) {
+            if (player.posX + player.width - 20 > e.posX &&
+                    player.posY + player.height - 20 > e.posY &&
+                    player.posX + 20 < e.posX + e.width &&
+                    player.posY + 20 < e.posY + e.height) {
                 stackEnemies.push(listEnemies.remove(i));
                 player.life--;
             }

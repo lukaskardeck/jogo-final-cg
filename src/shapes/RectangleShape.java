@@ -41,8 +41,9 @@ public class RectangleShape implements Shape {
         // this.setPosition(rect.posX + rect.width, Constants.WINDOW_HEIGHT -
         // this.height);
         if (up)
-            this.setPosition(rect.posX + rect.width, 0);
+            this.setPosition(rect.posX + rect.width, rect.posY);
         else
+            // this.setPosition(rect.posX + rect.width, Constants.WINDOW_HEIGHT - this.height );
             this.setPosition(rect.posX + rect.width, Constants.WINDOW_HEIGHT - this.height);
     }
 
@@ -86,8 +87,7 @@ public class RectangleShape implements Shape {
 
     @Override
     public void render(Graphics g) {
-
-        g.setColor(color);
+        g.setColor(Resource.getInstance().colorTransition());
         g.fillRect((int) posX, (int) posY, (int) width, (int) height);
 
         // if (borderColor != null) {

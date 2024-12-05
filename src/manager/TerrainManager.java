@@ -13,7 +13,6 @@ public class TerrainManager {
     public ArrayList<Shape> upShapes;
     public ArrayList<Shape> downShapes;
     public ArrayList<ArrayList<Shape>> shapesTest;
-
     // public RectangleShape 
     //     r1,
     //     r2, 
@@ -40,15 +39,18 @@ public class TerrainManager {
 
         Color terrainColor = new Color(115, 45, 40);
 
+        int height = Constants.MAX_HEIGHT_TERRAIN;
+
+        // Terrenos da parte superior
         for (int i = 0; i < 4; i++) {
             if (i % 2 == 0) {
-                RectangleShape r1 = new RectangleShape(512, 140, terrainColor);
+                RectangleShape r1 = new RectangleShape(512, height, terrainColor);
                 if (i != 0) r1.positionNextTo((RectangleShape) upShapes.get(i - 1), true);
-                else r1.setPosition(-256, 0);
+                else r1.setPosition(-256, 50);
                 upShapes.add(r1);
             }
             else {
-                RectangleShape r1 = new RectangleShape(512, 70, terrainColor);
+                RectangleShape r1 = new RectangleShape(512, height/2, terrainColor);
                 r1.positionNextTo((RectangleShape) upShapes.get(i - 1), true);
                 upShapes.add(r1);
             }
@@ -60,15 +62,16 @@ public class TerrainManager {
 
         // shapesTest.add(upShapes);
 
+        // Terrenos da parte inferior
         for (int i = 0; i < 4; i++) {
             if (i % 2 == 0) {
-                RectangleShape r1 = new RectangleShape(512, 140, terrainColor);
+                RectangleShape r1 = new RectangleShape(512, height, terrainColor);
                 if (i == 0) r1.setPosition(0, Constants.WINDOW_HEIGHT - r1.height);
                 else r1.positionNextTo((RectangleShape) downShapes.get(i-1), false);
                 downShapes.add(r1);
             }
             else {
-                RectangleShape r1 = new RectangleShape(512, 70, terrainColor);
+                RectangleShape r1 = new RectangleShape(512, height/2, terrainColor);
                 r1.positionNextTo((RectangleShape) downShapes.get(i-1), false);
                 downShapes.add(r1);
             }
@@ -199,6 +202,14 @@ public class TerrainManager {
             }
         }
     }
+
+    // public void colorTransition() {
+    //     for (Shape shape : shapes) {
+    //         if (shape instanceof RectangleShape rect) {
+    //             rect.color = Resource.getInstance().colorTransition();
+    //         }
+    //     }
+    // }
 
     public void renderTerrains(Graphics g) {
         for (Shape shape : shapes) {

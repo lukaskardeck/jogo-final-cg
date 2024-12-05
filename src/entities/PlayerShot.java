@@ -15,8 +15,8 @@ public class PlayerShot {
     public boolean isActive;
 
     public PlayerShot() {
-        this.width = 8;
-        this.height = 4;
+        this.width = 6;
+        this.height = 3;
         this.velX = 15;
     }
 
@@ -36,8 +36,10 @@ public class PlayerShot {
         this.posY = player.posY + (player.height / 2) - (this.height / 2) + 16;
     }
 
+    
+
     public void render(Graphics g) {
-        g.setColor(Color.black);
+        g.setColor(Resource.getInstance().colorTransition());
         g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
     }
 }

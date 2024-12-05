@@ -11,6 +11,9 @@ import utils.Constants;
 import utils.Resource;
 
 public class Enemy {
+    public static final float ENEMY_VELX_MODULE = 2;
+    public static final float ENEMY_VELY_MODULE = 8;
+
     public double posX;
     public double posY;
     public double velX;
@@ -25,14 +28,15 @@ public class Enemy {
     public Enemy() {
         this.random = new Random();
         this.width = 45;
-        this.height = 36;
+        this.height = 45;
         this.posX = Constants.WINDOW_WIDTH;
-        this.posY = random.nextDouble((608 - this.height) - (160 + this.height)) + (160 + this.height);
-        this.velX = -Constants.ENEMY_VELOCITY_MODULE;
-        this.velY = 8;
+        this.posY = random.nextDouble((Constants.WINDOW_HEIGHT - Constants.MAX_HEIGHT_TERRAIN - 20 - this.height) - (Constants.MAX_HEIGHT_TERRAIN + 20 + this.height)) + (Constants.MAX_HEIGHT_TERRAIN + 20 + this.height);
+        this.velX = -ENEMY_VELX_MODULE;
+        this.velY = this.random.nextBoolean() ? ENEMY_VELY_MODULE : -ENEMY_VELY_MODULE;
+        //System.out.println(this.velY);
 
         try {
-            this.sprite = ImageIO.read(getClass().getResource("../assets/images/inimigo.png"));
+            this.sprite = ImageIO.read(getClass().getResource("../assets/images/Alien.png"));
         } catch (Exception e) {
             System.out.println("Erro ao carregar a sprite do inimigo");
         }
@@ -43,13 +47,13 @@ public class Enemy {
         this.posX += this.velX * velocityFactor;
         this.posY += this.velY * velocityFactor;
 
-        if (this.posY < 160) {
-            this.posY = 160;
+        if (this.posY < Constants.MAX_HEIGHT_TERRAIN + 20 + 50) {
+            this.posY = Constants.MAX_HEIGHT_TERRAIN + 20 + 50;
             this.velY *= -1;
         }
 
-        else if (this.posY + this.height > 608) {
-            this.posY = 608 - this.height;
+        else if (this.posY + this.height > Constants.WINDOW_HEIGHT - Constants.MAX_HEIGHT_TERRAIN - 20) {
+            this.posY = Constants.WINDOW_HEIGHT - Constants.MAX_HEIGHT_TERRAIN - 20 - this.height;
             this.velY *= -1;
         }
 
@@ -58,12 +62,13 @@ public class Enemy {
     public void respawn() {
         this.posX = Constants.WINDOW_WIDTH;
         // this.posY = new Random().nextFloat(Constants.WINDOW_HEIGHT - this.height);
-        this.posY = random.nextDouble((608 - this.height) - (160 + this.height)) + (160 + this.height);
+        // this.posY = random.nextDouble((608 - this.height) - (160 + this.height)) + (160 + this.height);
+        this.posY = random.nextDouble((Constants.WINDOW_HEIGHT - Constants.MAX_HEIGHT_TERRAIN - 20 - this.height) - (Constants.MAX_HEIGHT_TERRAIN + 20 + this.height)) + (Constants.MAX_HEIGHT_TERRAIN + 20 + this.height);
     }
 
     public void render(Graphics g) {
-        g.setColor(new Color(250, 215, 150));
-        g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
-        // g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
+        // g.setColor(new Color(250, 215, 150));
+        // g.fillRect((int) this.posX, (int) this.posY, (int) this.width, (int) this.height);
+        g.drawImage(sprite, (int) this.posX, (int) this.posY, null);
     }
 }
