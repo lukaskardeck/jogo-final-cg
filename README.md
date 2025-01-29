@@ -38,7 +38,7 @@ O jogo consiste em um ambiente side-scrolling onde o jogador controla uma nave q
 
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/lukaskardeck/jogo-final-cg.git
+   git clone https://github.com/lukaskardeck/scramble-game-java.git
    ```
 
    ou faça o download do projeto em um ZIP.
