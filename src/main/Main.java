@@ -11,7 +11,7 @@ public class Main {
     public Game game;
 
     public Main() {
-        window = new JFrame("ShadowGame");
+        window = new JFrame("ScrambleGame");
         game = new Game();
         game.setPreferredSize(new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT));
         window.getContentPane().add(game);

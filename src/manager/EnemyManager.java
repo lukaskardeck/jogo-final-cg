@@ -12,7 +12,8 @@ import utils.Resource;
 public class EnemyManager {
     public final int NUM_ENEMY = 10;
     public final double MIN_RESPAWN_INTERVAL = 0.7;
-    public final double MAX_VELOCITY_ENEMY = 7;
+    public final double MAX_VELX_ENEMY = 7;
+    public final double MAX_VELY_ENEMY = 12;
     public final double TIME_DECREMENT_INTERVAL_RESPAWN = 8.0;
 
     // public Stack<Enemy> stackEnemies;
@@ -23,7 +24,8 @@ public class EnemyManager {
     public double intervalRespawn;
     public double elapsedTime;
 
-    public double newVelEnemy = Enemy.ENEMY_VELX_MODULE;
+    public double newVelXEnemy = Enemy.ENEMY_VELX_MODULE;
+    public double newVelYEnemy = Enemy.ENEMY_VELY_MODULE;
 
     public EnemyManager() {
         intervalRespawn = 4.0;
@@ -46,10 +48,13 @@ public class EnemyManager {
         // Verifique se é hora de reduzir o intervalo de respawn
         if (elapsedTime >= TIME_DECREMENT_INTERVAL_RESPAWN) {
             elapsedTime = 0.0; // Resete o contador de 10 segundos
-            intervalRespawn = Math.max(intervalRespawn - 0.5, MIN_RESPAWN_INTERVAL);
+            intervalRespawn = Math.max(intervalRespawn - 0.4, MIN_RESPAWN_INTERVAL);
             // intervalRespawn -= 0.5;
-            newVelEnemy = Math.min(newVelEnemy + 0.2, MAX_VELOCITY_ENEMY);
+            newVelXEnemy = Math.min(newVelXEnemy + 0.2, MAX_VELX_ENEMY);
+            newVelYEnemy = Math.min(newVelYEnemy + 0.4, MAX_VELY_ENEMY);
+            System.out.println("Novo velocidade em Y: " + newVelYEnemy);
             // System.out.println("Novo intervalo de respawn: " + intervalRespawn);
+        // }
         }
 
         if (!queueEnemies.isEmpty()) {
@@ -60,7 +65,8 @@ public class EnemyManager {
             if (shouldSpawnEnemy) {
                 Enemy e = queueEnemies.poll();
                 e.respawn();
-                e.velX = -newVelEnemy;
+                e.velX = -newVelXEnemy;
+                e.velY = e.velY > 0 ? newVelYEnemy : -newVelYEnemy;
                 listEnemies.add(e);
                 timerRespawnEnemy = 0.0;
             }
@@ -77,7 +83,7 @@ public class EnemyManager {
         }
 
         intervalRespawn = 4.0;
-        newVelEnemy = Enemy.ENEMY_VELX_MODULE;
+        newVelXEnemy = Enemy.ENEMY_VELX_MODULE;
     }
 
     public void render(Graphics g) {

@@ -15,7 +15,6 @@ public class GameView {
 
     public GameView() {
         try {
-            // Carrega a fonte como recurso do classpath
             InputStream is = getClass().getResourceAsStream("../assets/fonts/upheavtt.ttf");
             customFont = Font.createFont(Font.TRUETYPE_FONT, is);
             customFont = customFont.deriveFont(Font.BOLD, 30);
@@ -44,8 +43,8 @@ public class GameView {
 
     public void renderGameOver(Graphics g) {
         String title = "GAMEOVER";
-        String playOption = "Press ENTER to Restart";
-        String exitOption = "Press ESC to Quit";
+        String playOption = "'ENTER' TO RESTART";
+        String exitOption = "'ESC' TO QUIT";
 
         // Escurecer a tela
         g.setColor(new Color(0, 0, 0, 200));
@@ -99,8 +98,8 @@ public class GameView {
 
     public void renderMenu(Graphics g) {
         String title = "GAME MENU";
-        String playOption = "Press ENTER to Play";
-        String exitOption = "Press ESC to Quit";
+        String playOption = "'ENTER' TO PLAY";
+        String exitOption = "'ESC' TO QUIT";
 
         g.setFont(customFont);
         g.setColor(Color.WHITE);

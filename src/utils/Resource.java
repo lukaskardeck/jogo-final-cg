@@ -31,30 +31,37 @@ public class Resource {
     }
 
     public Color colorTransition() {
-        double changeFactor = 0.1;
-        if (r > 0.0 && g < 255.0 && restartColor) {
+        double changeFactor = 0.08;
+        double minBrightness = 100.0;
+    
+        if (r > minBrightness && g < 255.0 && restartColor) {
             r -= changeFactor;
             g += changeFactor;
-            b = 0.0;
-        } else if (g > 0.0 && b < 255.0) {
-            r = 0.0;
+            b = minBrightness;
+        } else if (g > minBrightness && b < 255.0) {
+            r = minBrightness;
             g -= changeFactor;
             b += changeFactor;
-        } else if (r < 255.0 && b > 0.0) {
+        } else if (r < 255.0 && b > minBrightness) {
             r += changeFactor;
-            g = 0.0;
+            g = minBrightness;
             b -= changeFactor;
             restartColor = false;
-            if (r >= 255.0 || b <= 0.0) {
+    
+            if (r >= 255.0 || b <= minBrightness) {
                 r = 255.0;
-                g = 0.0;
-                b = 0.0;
+                g = minBrightness;
+                b = minBrightness;
                 restartColor = true;
             }
         }
-
-        // System.out.println("r=" + r + ", g=" + g + ", b=" + b);
-
+    
+        // Limita os valores para garantir o brilho necessário
+        r = Math.max(r, minBrightness);
+        g = Math.max(g, minBrightness);
+        b = Math.max(b, minBrightness);
+    
         return new Color((int) r, (int) g, (int) b);
     }
+    
 }

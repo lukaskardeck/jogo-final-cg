@@ -15,8 +15,8 @@ public class PlayerShot {
     public boolean isActive;
 
     public PlayerShot() {
-        this.width = 6;
-        this.height = 3;
+        this.width = 5;
+        this.height = 5;
         this.velX = 15;
     }
 
@@ -32,8 +32,8 @@ public class PlayerShot {
     }
 
     public void respawn(Player player) {
-        this.posX = player.posX + player.width - this.width - 15;
-        this.posY = player.posY + (player.height / 2) - (this.height / 2) + 16;
+        this.posX = player.posX + player.width - this.width - 10;
+        this.posY = player.posY + (player.height / 2) - (this.height / 2) + 20;
     }
 
     
